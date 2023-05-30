@@ -98,8 +98,8 @@ class Edge:
 
     def is_angle(self, s):
         phi = cos(pi/18)
-        return R3(0.0, 0.0, 1.0).dot((self.r3(s.beg) - self.r3(s.fin))/\
-            self.length()) <= phi
+        return R3(0.0, 0.0, 1.0).dot((self.r3(s.beg) - self.r3(s.fin)))/\
+            self.length() <= phi
 
     def in_circle(self, c):
         x = (self.beg.x - self.fin.x)/2
