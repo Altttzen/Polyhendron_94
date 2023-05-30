@@ -1,5 +1,6 @@
 from math import pi
 from math import sqrt
+from math import cos
 from functools import reduce
 from operator import add
 from common.r3 import R3
@@ -88,9 +89,17 @@ class Edge:
                 self.gaps[0].fin - self.gaps[0].beg != 1.0)
 
     def length(self):
-        return round(sqrt((self.beg.x - self.fin.x) ** 2
+        return sqrt((self.beg.x - self.fin.x) ** 2
                     + (self.beg.y - self.fin.y) ** 2
-                    + (self.beg.z - self.fin.z) ** 2), 5)
+                    + (self.beg.z - self.fin.z) ** 2)
+    def len_p(self):
+        return round(sqrt((self.beg.x - self.fin.x) ** 2
+                    + (self.beg.y - self.fin.y) ** 2), 5)
+
+    def is_angle(self, s):
+        phi = cos(pi/18)
+        return R3(0.0, 0.0, 1.0).dot((self.r3(s.beg) - self.r3(s.fin))/\
+            self.length()) <= phi
 
     def in_circle(self, c):
         x = (self.beg.x - self.fin.x)/2
@@ -192,17 +201,17 @@ class Polyedr:
                 edges.append(e)
         self.edges = edges
 
+    # метод нахождения сумм длин проекций частично видимых ребер
     def sum_of_edges(self):
-        phi = 10*pi/180
         self.edges_uniq()
         for e in self.edges:
             for f in self.facets:
                 e.shadow(f)
             for s in e.gaps:
                 # if e.is_part():
-                if e.in_circle(self.c) and e.is_part() and R3(0.0, 0.0, 1.0).dot(e.r3(s.beg) - e.r3(s.fin))/e.length() <= phi:
-                    self.sum_edges += e.length()
-        return self.sum_edges
+                if e.in_circle(self.c) and e.is_part() and e.is_angle(s):
+                    self.sum_edges += e.len_p()
+        return self.sum_edges/self.c
 
     # Метод изображения полиэдра
     def draw(self, tk):
