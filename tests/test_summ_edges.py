@@ -5,6 +5,7 @@ from common.tk_drawer import TkDrawer
 
 tk = TkDrawer()
 
+
 class TestPolyedr:
 
     def test_0(self):
@@ -17,16 +18,17 @@ class TestPolyedr:
         assert Polyedr(f"data_tests/test2.geom").sum_of_edges() == 0.0
 
     def test_3(self):
-        assert Polyedr(f"data_tests/test3.geom").sum_of_edges() == 400.0
+        assert Polyedr(f"data_tests/test3.geom").sum_of_edges() == 0.0
 
     def test_4(self):
-        assert Polyedr(f"data_tests/test4.geom").sum_of_edges() == 50.0
+        assert Polyedr(f"data_tests/test4.geom").sum_of_edges() == 4.0
 
     def test_5(self):
-        assert Polyedr(f"data_tests/test5.geom").sum_of_edges() == 600.0
+        assert Polyedr(f"data_tests/test5.geom").sum_of_edges() == \
+            approx(2*sqrt(2))
 
     def test_6(self):
-        assert Polyedr(f"data_tests/test6.geom").sum_of_edges() == 50.0
+        assert Polyedr(f"data_tests/test6.geom").sum_of_edges() == 2.0
 
     def test_7(self):
         assert Polyedr(f"data_tests/test7.geom").sum_of_edges() == 0.0

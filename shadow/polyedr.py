@@ -83,29 +83,32 @@ class Edge:
         return Segment(Edge.SBEG, x) if f0 < 0.0 else Segment(x, Edge.SFIN)
 
     def is_part(self):
-        return (self.gaps[0].fin <= 1.0 and
-                self.gaps[0].beg >= 0.0 and
-                round(self.gaps[0].beg, 10) != round(self.gaps[0].fin, 10) and
-                self.gaps[0].fin - self.gaps[0].beg != 1.0)
+        return (len(self.gaps) != 0 and
+                0 < round(self.gaps[0].fin - self.gaps[0].beg, 5) < 1)
 
     def length(self):
         return sqrt((self.beg.x - self.fin.x) ** 2
                     + (self.beg.y - self.fin.y) ** 2
                     + (self.beg.z - self.fin.z) ** 2)
-    def len_p(self):
-        return round(sqrt((self.beg.x - self.fin.x) ** 2
-                    + (self.beg.y - self.fin.y) ** 2), 5)
 
-    def is_angle(self, s):
+    def len_p(self):
+        return round(sqrt((self.beg.x - self.fin.x) ** 2 +
+                          (self.beg.y - self.fin.y) ** 2), 5)
+
+    def is_angle(self):
         phi = cos(pi/18)
-        return R3(0.0, 0.0, 1.0).dot((self.r3(s.beg) - self.r3(s.fin)))/\
-            self.length() <= phi
+        x = (self.beg.x - self.fin.x)
+        y = (self.beg.y - self.fin.y)
+        z = (self.beg.z - self.fin.z)
+        V = R3(x, y, z)
+        return R3(0.0, 0.0, 1.0).dot(V) / self.length() <= phi
 
     def in_circle(self, c):
-        x = (self.beg.x - self.fin.x)/2
-        y = (self.beg.y - self.fin.y)/2
-        z = (self.beg.z - self.fin.z)/2
+        x = (self.beg.x + self.fin.x)/2
+        y = (self.beg.y + self.fin.y)/2
+        z = (self.beg.z + self.fin.z)/2
         return x**2 + y**2 + z**2 < 4*c**2
+
 
 class Facet:
     """ Грань полиэдра """
@@ -207,10 +210,12 @@ class Polyedr:
         for e in self.edges:
             for f in self.facets:
                 e.shadow(f)
-            for s in e.gaps:
-                # if e.is_part():
-                if e.in_circle(self.c) and e.is_part() and e.is_angle(s):
-                    self.sum_edges += e.len_p()
+            if e.in_circle(self.c) and e.is_part() and e.is_angle():
+                self.sum_edges += e.len_p()
+            # for s in e.gaps:
+            #     print(e.gaps[0].beg, e.gaps[0].fin)
+            #     if e.is_part():
+            #         print('111', e.gaps[0].beg, e.gaps[0].fin)
         return self.sum_edges/self.c
 
     # Метод изображения полиэдра
