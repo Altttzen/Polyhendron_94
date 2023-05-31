@@ -101,7 +101,7 @@ class Edge:
         y = (self.beg.y - self.fin.y)
         z = (self.beg.z - self.fin.z)
         V = R3(x, y, z)
-        return R3(0.0, 0.0, 1.0).dot(V) / self.length() <= phi
+        return abs(R3(0.0, 0.0, 1.0).dot(V) / self.length()) <= phi
 
     def in_circle(self, c):
         x = (self.beg.x + self.fin.x)/2
